@@ -1,0 +1,4 @@
+{
+    "node_id": "node-01",
+    "gpus": [{"gpu_id": 0, "detected": true, "temperature_c": 60, "error_count": 0},{"gpu_id": 1, "detected": true, "temperature_c": 68, "error_count": 0}]
+}
