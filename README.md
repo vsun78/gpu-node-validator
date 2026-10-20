@@ -8,11 +8,13 @@ Live collection uses the public `nvidia-smi` utility. The collector is separated
 
 | Demo | Description |
 | --- | --- |
-| [Live GPU collection](docs/demos/live-gpu.mp4) | Collects and validates telemetry from a physical NVIDIA GPU using `nvidia-smi`. |
-| [Random GPU simulator](docs/demos/random-gpu-simulator.mp4) | Generates simulated multi-GPU telemetry and reports the detected health failures. |
-| [Pytest run](docs/demos/pytest-run.mp4) | Runs the complete automated test suite. |
+| https://github.com/user-attachments/assets/b6b1600f-7d98-42ba-b152-d058bfee60f1 | Collects and validates telemetry from a physical NVIDIA GPU using `nvidia-smi`. |
+| https://github.com/user-attachments/assets/860ec519-3b6c-4a51-b93a-a56b6876216d | Generates simulated multi-GPU telemetry and reports the detected health failures. |
+| https://github.com/user-attachments/assets/86c6bb39-ae80-49e2-91b4-838b0642c7a1 | Runs the complete automated test suite. |
+
 
 ## Setup
+
 
 Create and activate a virtual environment, then install the test dependency:
 
