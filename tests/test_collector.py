@@ -2,7 +2,12 @@ from pathlib import Path
 
 import pytest
 
-from gpu_validator.collector import TelemetryLoadError, load_node
+from gpu_validator.collector import (
+    ConfigLoadError,
+    TelemetryLoadError,
+    load_config,
+    load_node,
+)
 
 
 def test_load_node_reads_valid_json(tmp_path: Path) -> None:
@@ -89,3 +94,73 @@ def test_load_node_requires_gpu_list(tmp_path: Path) -> None:
 
     with pytest.raises(TelemetryLoadError, match="JSON array"):
         load_node(telemetry_file)
+
+
+def test_load_config_reads_valid_config(tmp_path: Path) -> None:
+    config_file = tmp_path / "config.json"
+    config_file.write_text(
+        (
+            '{"expected_gpu_count": 2, '
+            '"max_temperature_c": 85, '
+            '"max_error_count": 0}'
+        ),
+        encoding="utf-8",
+    )
+
+    result = load_config(config_file)
+
+    assert result["expected_gpu_count"] == 2
+    assert result["max_temperature_c"] == 85
+    assert result["max_error_count"] == 0
+
+
+def test_load_config_rejects_malformed_json(tmp_path: Path) -> None:
+    config_file = tmp_path / "config.json"
+    config_file.write_text(
+        '{"expected_gpu_count": 2,',
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ConfigLoadError, match="invalid JSON"):
+        load_config(config_file)
+
+
+def test_load_config_requires_all_keys(tmp_path: Path) -> None:
+    config_file = tmp_path / "config.json"
+    config_file.write_text(
+        '{"expected_gpu_count": 2, "max_temperature_c": 85}',
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ConfigLoadError, match="max_error_count"):
+        load_config(config_file)
+
+
+def test_load_config_rejects_invalid_gpu_count(tmp_path: Path) -> None:
+    config_file = tmp_path / "config.json"
+    config_file.write_text(
+        (
+            '{"expected_gpu_count": "two", '
+            '"max_temperature_c": 85, '
+            '"max_error_count": 0}'
+        ),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ConfigLoadError, match="nonnegative integer"):
+        load_config(config_file)
+
+
+def test_load_config_rejects_negative_error_limit(tmp_path: Path) -> None:
+    config_file = tmp_path / "config.json"
+    config_file.write_text(
+        (
+            '{"expected_gpu_count": 2, '
+            '"max_temperature_c": 85, '
+            '"max_error_count": -1}'
+        ),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ConfigLoadError, match="nonnegative integer"):
+        load_config(config_file)

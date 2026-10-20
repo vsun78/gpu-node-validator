@@ -1,0 +1,17 @@
+{
+  "node_id": "node-02",
+  "gpus": [
+    {
+      "gpu_id": 0,
+      "detected": false,
+      "temperature_c": 95,
+      "error_count": 2
+    },
+    {
+      "gpu_id": 1,
+      "detected": true,
+      "temperature_c": 70,
+      "error_count": 0
+    }
+  ]
+}
