@@ -4,6 +4,20 @@ A Python command-line tool that validates fixture-based JSON, randomly generated
 
 Live collection uses the public `nvidia-smi` utility. The collector is separated from validation so another hardware source, such as AMD SMI on compatible hardware, can be added without replacing the validation engine. This project does not reproduce AMD internal tools.
 
+## System design evolution
+
+### Original MVP design
+
+The first version used one direct pipeline: load GPU telemetry from JSON, validate it against configured health thresholds, and format the result for output.
+
+![Hand-drawn original MVP architecture](docs/architecture/old-mvp-design.jpg)
+
+### Current system design
+
+The current version preserves the same collection-to-validation-to-reporting pipeline while supporting JSON fixtures, randomized simulation, and live NVIDIA telemetry through a shared normalized data format. Pytest, GitHub Actions, and the Bash wrapper support automated verification and Linux execution.
+
+![Hand-drawn current GPU Node Validator architecture](docs/architecture/current-system-design.jpg)
+
 ## Demo videos
 
 | Demo | Description |
@@ -146,12 +160,3 @@ GitHub Actions runs the full pytest suite and smoke-tests both the CLI and Bash 
 - Error count must not exceed `max_error_count`.
 - Missing or invalid metrics fail validation.
 - When a hardware source cannot provide an error counter, the report warns that the rule was skipped instead of treating the unknown value as zero.
-
-## Limitations
-
-- Live hardware collection currently supports NVIDIA GPUs exposed by `nvidia-smi`; the Intel integrated GPU is not included.
-- NVIDIA consumer GPUs do not expose the same diagnostic counters as data-center GPUs, so unavailable error counts are reported as warnings.
-- GitHub Actions validates parsing with mocked output rather than accessing physical GPU hardware.
-- Generated telemetry models test scenarios; it does not represent measurements from physical hardware.
-- Thresholds are demonstration rules, not AMD hardware specifications.
-- AMD SMI, XML input, distributed polling, dashboards, and anomaly detection are outside the current scope.
