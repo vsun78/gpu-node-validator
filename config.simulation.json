@@ -1,0 +1,5 @@
+{
+  "expected_gpu_count": 8,
+  "max_temperature_c": 85,
+  "max_error_count": 0
+}

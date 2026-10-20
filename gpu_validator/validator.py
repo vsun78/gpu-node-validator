@@ -17,6 +17,7 @@ def _is_number(value: object) -> bool:
 def validate_node(node: dict, config: dict) -> dict:
     """validate GPU telemetry against the configured health rules."""
     failures = []
+    warnings = []
     gpus = node["gpus"]
 
     expected_count = config["expected_gpu_count"]
@@ -84,7 +85,12 @@ def validate_node(node: dict, config: dict) -> dict:
 
         error_count = gpu["error_count"]
 
-        if (
+        if error_count is None:
+            warnings.append(
+                f"{gpu_label} error_count is unavailable; "
+                "error-count rule skipped."
+            )
+        elif (
             isinstance(error_count, bool)
             or not isinstance(error_count, int)
         ):
@@ -105,6 +111,11 @@ def validate_node(node: dict, config: dict) -> dict:
 
     return {
         "node_id": node["node_id"],
+        "telemetry_source": node.get("telemetry_source", "unknown"),
+        "collected_at_utc": node.get("collected_at_utc"),
+        "simulation_seed": node.get("simulation_seed"),
         "status": status,
         "failures": failures,
+        "warnings": warnings,
+        "gpus": gpus,
     }

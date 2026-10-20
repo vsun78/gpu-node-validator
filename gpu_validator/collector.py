@@ -54,6 +54,8 @@ def load_node(path: str | Path) -> dict:
             "Telemetry gpus must be a JSON array."
         )
 
+    node_data.setdefault("telemetry_source", "json-file")
+
     return node_data
 
 

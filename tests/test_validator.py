@@ -107,3 +107,17 @@ def test_invalid_temperature_type_fails() -> None:
         "GPU 0 temperature_c must be a number."
         in result["failures"]
     )
+
+
+def test_unavailable_error_count_adds_warning_without_failing() -> None:
+    node = make_healthy_node()
+    node["gpus"][0]["error_count"] = None
+
+    result = validate_node(node, CONFIG)
+
+    assert result["status"] == "PASS"
+    assert result["failures"] == []
+    assert (
+        "GPU 0 error_count is unavailable; error-count rule skipped."
+        in result["warnings"]
+    )
