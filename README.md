@@ -4,30 +4,13 @@ A Python command-line tool that validates fixture-based JSON, randomly generated
 
 Live collection uses the public `nvidia-smi` utility. The collector is separated from validation so another hardware source, such as AMD SMI on compatible hardware, can be added without replacing the validation engine. This project does not reproduce AMD internal tools.
 
-## Architecture
+## Demo videos
 
-```mermaid
-flowchart LR
-    CLI[CLI main.py] --> JSON[JSON collector]
-    CLI --> Simulation[Random telemetry simulator]
-    CLI --> NVIDIA[NVIDIA SMI collector]
-    JSON --> Node[Normalized node telemetry]
-    Simulation --> Node
-    NVIDIA --> Node
-    CLI --> Config[Rule configuration]
-    Node --> Validator[Validator]
-    Config --> Validator
-    Validator --> Result[Structured result]
-    Result --> Reporter[Terminal and JSON reporting]
-    Reporter --> Exit[Exit code]
-```
-
-- `main.py` parses arguments and coordinates the workflow.
-- `collector.py` loads and performs basic structural checks on JSON inputs.
-- `simulator.py` generates random, reproducible GPU telemetry at scale.
-- `nvidia_collector.py` queries `nvidia-smi` and normalizes live metrics.
-- `validator.py` applies configurable GPU health rules.
-- `reporter.py` prints results and writes JSON reports.
+| Demo | Description |
+| --- | --- |
+| [Live GPU collection](docs/demos/live-gpu.mp4) | Collects and validates telemetry from a physical NVIDIA GPU using `nvidia-smi`. |
+| [Random GPU simulator](docs/demos/random-gpu-simulator.mp4) | Generates simulated multi-GPU telemetry and reports the detected health failures. |
+| [Pytest run](docs/demos/pytest-run.mp4) | Runs the complete automated test suite. |
 
 ## Setup
 
