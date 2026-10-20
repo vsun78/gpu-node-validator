@@ -1,0 +1,46 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Run test suite
+        run: python -m pytest -v
+
+      - name: Smoke test CLI and JSON report
+        run: |
+          python main.py \
+            --input samples/healthy_node.json \
+            --config config.json \
+            --output reports/healthy.json
+
+      - name: Smoke test Bash wrapper
+        env:
+          PYTHON_BIN: python
+        run: |
+          bash scripts/run_validation.sh \
+            samples/healthy_node.json \
+            config.json \
+            reports/bash-result.json

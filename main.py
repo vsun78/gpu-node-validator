@@ -8,7 +8,11 @@ from gpu_validator.collector import (
     load_config,
     load_node,
 )
-from gpu_validator.reporter import print_report
+from gpu_validator.reporter import (
+    ReportWriteError,
+    print_report,
+    write_json_report,
+)
 from gpu_validator.validator import validate_node
 
 
@@ -29,6 +33,11 @@ def parse_args(arguments: list[str] | None = None) -> argparse.Namespace:
         type=Path,
         help="Path to a validation configuration JSON file.",
     )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        help="Optional path for the structured JSON report.",
+    )
     return parser.parse_args(arguments)
 
 
@@ -44,6 +53,14 @@ def main(arguments: list[str] | None = None) -> int:
         return 2
 
     result = validate_node(node, config)
+
+    if args.output is not None:
+        try:
+            write_json_report(result, args.output)
+        except ReportWriteError as error:
+            print(f"ERROR: {error}", file=sys.stderr)
+            return 2
+
     print_report(result)
 
     if result["status"] == "PASS":
